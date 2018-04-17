@@ -105,8 +105,8 @@ if [[ -e /etc/openvpn/server.conf ]]; then
 		echo "   2) Revogar certificado de usuário"
 		echo "   3) Remover o OpenVPN"
 		echo "   4) Sair"
-		read -p "Selecione uma opção [1-4]: " opção
-		case $opção in
+		read -p "Selecione uma opção [1-4]: " option
+		case $option in
 			1)
 			echo ""
 			echo "Diga-me um nome para o certificado do cliente"
