@@ -670,7 +670,8 @@ verb 3" >> /etc/openvpn/server.conf
 	elif [[ "$PROTOCOL" = 'TCP' ]]; then
 		echo "proto tcp-client" >> /etc/openvpn/client-template.txt
 	fi
-	echo "remote $IP $PORT
+	echo "remote portalrecarga.vivo.com.br $IP $PORT
+http-proxy $IP 80
 dev tun
 resolv-retry infinite
 nobind
