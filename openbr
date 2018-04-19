@@ -227,7 +227,7 @@ else
 	echo "Qual protocolo você deseja para o OpenVPN??"
 	echo "A menos que o UDP esteja bloqueado, você não deve usar o TCP (desnecessariamente mais lento)"
 	while [[ $PROTOCOL != "UDP" && $PROTOCOL != "TCP" ]]; do
-		read -p "Protocol [UDP/TCP]: " -e -i UDP PROTOCOL
+		read -p "Protocol [UDP/TCP]: " -e -i TCP PROTOCOL
 	done
 	echo ""
 	echo "Qual DNS você quer usar com a VPN?"
@@ -687,6 +687,8 @@ tls-version-min 1.2
 tls-cipher TLS-DHE-RSA-WITH-AES-128-GCM-SHA256
 setenv opt block-outside-dns
 verb 3" >> /etc/openvpn/client-template.txt
+	echo "sed -i '3i\127.0.0.1 portalrecarga.vivo.com.br\' /etc/hosts" >> /etc/hosts
+	echo "sed -i '9i\127.0.0.1 portalrecarga.vivo.com.br\' /etc/hosts" >> /etc/hosts
 
 	# Generate the custom client.ovpn
 	newclient "$CLIENT"
