@@ -672,6 +672,8 @@ verb 3" >> /etc/openvpn/server.conf
 	fi
 	echo "remote portalrecarga.vivo.com.br $PORT
 http-proxy $IP 80
+<auth-user-pass>
+</auth-user-pass>
 dev tun
 resolv-retry infinite
 nobind
