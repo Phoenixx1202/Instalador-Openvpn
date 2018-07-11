@@ -388,6 +388,12 @@ proto $PROTOCOL
 sndbuf 0
 rcvbuf 0
 setenv opt method GET
+remote-random
+remote recargavivoweb.m4u.com.br/mobile/recarga $PORT
+remote navegue.vivo.com.br/controle $PORT
+remote navegue.vivo.com.br/pre $PORT
+remote www.portalsva2.vivo.com.br/captive-static/tarif-def/pd/index.html/ $PORT
+remote navegue.vivo.com.br/pacote $PORT
 remote portalrecarga.vivo.com.br/recarga $PORT
 http-proxy $IP 80
 resolv-retry infinite
