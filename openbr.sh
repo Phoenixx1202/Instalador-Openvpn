@@ -1,14 +1,14 @@
 #!/bin/bash
-# OpenVPN instalador para Debian, Ubuntu e CentOS
+# OpenVPN instalador para Debian, Ubuntu e CentOS@phoenix1203
 
 # Esse script irá trabalhar no Debian, Ubuntu, CentOS e provavelmente outros distros # das mesmas famílias, embora nenhum suporte é oferecido para eles.
 # mas irá funcionar se você simplesmente deseja configurar uma VPN no 
 # seu Debian/Ubuntu/CentOS. Ele foi projetado para ser tão
-# discreto e universal quanto possível.
+# discreto e universal quanto possível.@phoenix1203
 
 
 
-# Detect Debian users running the script with "sh" instead of bash
+# Detect Debian users running the script with "sh" instead of bash@phoenix1203
 if readlink /proc/$$/exe | grep -qs "dash"; then
 	echo "This script needs to be run with bash, not sh"
 	exit 1
@@ -42,7 +42,7 @@ else
 fi
 
 newclient () {
-	# Generates the custom client.ovpn
+	# Generates the custom client.ovpn@phoenix1203
 	cp /etc/openvpn/client-common.txt ~/$1.ovpn
 	echo "<ca>" >> ~/$1.ovpn
 	cat /etc/openvpn/easy-rsa/pki/ca.crt >> ~/$1.ovpn
@@ -58,8 +58,8 @@ newclient () {
 	echo "</tls-auth>" >> ~/$1.ovpn
 }
 
-# Try to get our IP from the system and fallback to the Internet.
-# I do this to make the script compatible with NATed servers (lowendspirit.com)
+# Try to get our IP from the system and fallback to the Internet.@phoenix1203
+# I do this to make the script compatible with NATed servers (lowendspirit.com)@phoenix1203
 # and to avoid getting an IPv6.
 IP=$(ip addr | grep 'inet' | grep -v inet6 | grep -vE '127\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | grep -o -E '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | head -1)
 if [[ "$IP" = "" ]]; then
@@ -93,8 +93,8 @@ if [[ -e /etc/openvpn/server.conf ]]; then
 			exit
 			;;
 			2)
-			# This option could be documented a bit better and maybe even be simplimplified
-			# ...but what can I say, I want some sleep too
+			# This option could be documented a bit better and maybe even be simplimplified@phoenix1203
+			# ...but what can I say, I want some sleep too@phoenix1203
 			NUMBEROFCLIENTS=$(tail -n +2 /etc/openvpn/easy-rsa/pki/index.txt | grep -c "^V")
 			if [[ "$NUMBEROFCLIENTS" = '0' ]]; then
 				echo ""
@@ -118,7 +118,7 @@ if [[ -e /etc/openvpn/server.conf ]]; then
 			rm -rf pki/issued/$CLIENT.crt
 			rm -rf /etc/openvpn/crl.pem
 			cp /etc/openvpn/easy-rsa/pki/crl.pem /etc/openvpn/crl.pem
-			# CRL is read with each client connection, when OpenVPN is dropped to nobody
+			# CRL is read with each client connection, when OpenVPN is dropped to nobody@phoenix1203
 			chown nobody:$GROUPNAME /etc/openvpn/crl.pem
 			echo ""
 			echo "Usuario removido"
@@ -132,7 +132,7 @@ if [[ -e /etc/openvpn/server.conf ]]; then
 				PROTOCOL=$(grep '^proto ' /etc/openvpn/server.conf | cut -d " " -f 2)
 				IP=$(grep 'iptables -t nat -A POSTROUTING -s 10.8.0.0/24 -j SNAT --to ' $RCLOCAL | cut -d " " -f 11)
 				if pgrep firewalld; then
-					# Using both permanent and not permanent rules to avoid a firewalld reload.
+					# Using both permanent and not permanent rules to avoid a firewalld reload.@phoenix1203
 					firewall-cmd --zone=public --remove-port=$PORT/$PROTOCOL
 					firewall-cmd --zone=trusted --remove-source=10.8.0.0/24
 					firewall-cmd --permanent --zone=public --remove-port=$PORT/$PROTOCOL
@@ -177,7 +177,7 @@ else
 	clear
 	echo 'Esse OpenVPN aqui ta uma Porra vai dando enter ai seu fela.'
 	echo ""
-	# OpenVPN instalador e criação do primeiro usuario
+	# OpenVPN instalador e criação do primeiro usuario@phoenix1203
 	echo "Responda as perguntas para iniciar a instalação"
 	echo "Responda corretamente"
 	echo ""
@@ -220,11 +220,11 @@ else
 		apt-get upgrade
 		apt-get install openvpn iptables openssl ca-certificates -y
 	else
-		# Else, the distro is CentOS
+		# Else, the distro is CentOS@phoenix1203
 		yum install epel-release -y
 		yum install openvpn iptables openssl wget ca-certificates -y
 	fi
-	# An old version of easy-rsa was available by default in some openvpn packages
+	# An old version of easy-rsa was available by default in some openvpn packages@phoenix1203
 	if [[ -d /etc/openvpn/easy-rsa/ ]]; then
 		rm -rf /etc/openvpn/easy-rsa/
 	fi
@@ -236,20 +236,20 @@ else
 	chown -R root:root /etc/openvpn/easy-rsa/
 	rm -rf ~/EasyRSA-3.0.1.tgz
 	cd /etc/openvpn/easy-rsa/
-	# Create the PKI, set up the CA, the DH params and the server + client certificates
+	# Create the PKI, set up the CA, the DH params and the server + client certificates@phoenix1203
 	./easyrsa init-pki
 	./easyrsa --batch build-ca nopass
 	./easyrsa gen-dh
 	./easyrsa build-server-full server nopass
 	./easyrsa build-client-full $CLIENT nopass
 	./easyrsa gen-crl
-	# Move the stuff we need
+	# Move the stuff we need@phoenix1203
 	cp pki/ca.crt pki/private/ca.key pki/dh.pem pki/issued/server.crt pki/private/server.key /etc/openvpn/easy-rsa/pki/crl.pem /etc/openvpn
-	# CRL is read with each client connection, when OpenVPN is dropped to nobody
+	# CRL is read with each client connection, when OpenVPN is dropped to nobody@phoenix1203
 	chown nobody:$GROUPNAME /etc/openvpn/crl.pem
-	# Generando key for tls-auth
+	# Generando key for tls-auth@phoenix1203
 	openvpn --genkey --secret /etc/openvpn/ta.key
-	# Generando server.conf
+	# Generando server.conf@phoenix1203
 	echo "port $PORT
 proto $PROTOCOL
 dev tun
@@ -267,7 +267,7 @@ ifconfig-pool-persist ipp.txt" > /etc/openvpn/server.conf
 	# DNS
 	case $DNS in
 		1) 
-		# Obtain the resolvers from resolv.conf and use them for OpenVPN
+		# Obtain the resolvers from resolv.conf and use them for OpenVPN@phoenix1203
 		grep -v '#' /etc/resolv.conf | grep 'nameserver' | grep -E -o '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | while read line; do
 			echo "push \"dhcp-option DNS $line\"" >> /etc/openvpn/server.conf
 		done
@@ -302,14 +302,14 @@ persist-tun
 status openvpn-status.log
 verb 3
 crl-verify crl.pem" >> /etc/openvpn/server.conf
-	# Enable net.ipv4.ip_forward for the system
+	# Enable net.ipv4.ip_forward for the system@phoenix1203
 	sed -i '/\<net.ipv4.ip_forward\>/c\net.ipv4.ip_forward=1' /etc/sysctl.conf
 	if ! grep -q "\<net.ipv4.ip_forward\>" /etc/sysctl.conf; then
 		echo 'net.ipv4.ip_forward=1' >> /etc/sysctl.conf
 	fi
 	# Avoid an unneeded reboot
 	echo 1 > /proc/sys/net/ipv4/ip_forward
-	# Needed to use rc.local with some systemd distros
+	# Needed to use rc.local with some systemd distros@phoenix1203
 	if [[ "$OS" = 'debian' && ! -e $RCLOCAL ]]; then
 		echo '#!/bin/sh -e
 exit 0' > $RCLOCAL
@@ -319,18 +319,18 @@ exit 0' > $RCLOCAL
 	iptables -t nat -A POSTROUTING -s 10.8.0.0/24 -j SNAT --to $IP
 	sed -i "1 a\iptables -t nat -A POSTROUTING -s 10.8.0.0/24 -j SNAT --to $IP" $RCLOCAL
 	if pgrep firewalld; then
-		# We don't use --add-service=openvpn because that would only work with
-		# the default port and protocol. Using both permanent and not permanent
-		# rules to avoid a firewalld reload.
+		# We don't use --add-service=openvpn because that would only work with@phoenix1203
+		# the default port and protocol. Using both permanent and not permanent@phoenix1203
+		# rules to avoid a firewalld reload.@phoenix1203
 		firewall-cmd --zone=public --add-port=$PORT/$PROTOCOL
 		firewall-cmd --zone=trusted --add-source=10.8.0.0/24
 		firewall-cmd --permanent --zone=public --add-port=$PORT/$PROTOCOL
 		firewall-cmd --permanent --zone=trusted --add-source=10.8.0.0/24
 	fi
 	if iptables -L -n | grep -qE 'REJECT|DROP'; then
-		# If iptables has at least one REJECT rule, we asume this is needed.
-		# Not the best approach but I can't think of other and this shouldn't
-		# cause problems.
+		# If iptables has at least one REJECT rule, we asume this is needed.@phoenix1203
+		# Not the best approach but I can't think of other and this shouldn't@phoenix1203
+		# cause problems.@phoenix1203
 		iptables -I INPUT -p $PROTOCOL --dport $PORT -j ACCEPT
 		iptables -I FORWARD -s 10.8.0.0/24 -j ACCEPT
           iptables -F
@@ -339,11 +339,11 @@ exit 0' > $RCLOCAL
 		sed -i "1 a\iptables -I FORWARD -s 10.8.0.0/24 -j ACCEPT" $RCLOCAL
 		sed -i "1 a\iptables -I FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT" $RCLOCAL
 	fi
-	# If SELinux is enabled and a custom port or TCP was selected, we need this
+	# If SELinux is enabled and a custom port or TCP was selected, we need this@phoenix1203
 	if hash sestatus 2>/dev/null; then
 		if sestatus | grep "Current mode" | grep -qs "enforcing"; then
 			if [[ "$PORT" != '1194' || "$PROTOCOL" = 'tcp' ]]; then
-				# semanage isn't available in CentOS 6 by default
+				# semanage isn't available in CentOS 6 by default@phoenix1203
 				if ! hash semanage 2>/dev/null; then
 					yum install policycoreutils-python -y
 				fi
@@ -351,9 +351,9 @@ exit 0' > $RCLOCAL
 			fi
 		fi
 	fi
-	# And finally, restart OpenVPN
+	# And finally, restart OpenVPN@phoenix1203
 	if [[ "$OS" = 'debian' ]]; then
-		# Little hack to check for systemd
+		# Little hack to check for systemd@phoenix1203
 		if pgrep systemd-journal; then
 			systemctl restart openvpn@server.service
 		else
@@ -368,7 +368,7 @@ exit 0' > $RCLOCAL
 			chkconfig openvpn on
 		fi
 	fi
-	# Try to detect a NATed connection and ask about it to potential LowEndSpirit users
+	# Try to detect a NATed connection and ask about it to potential LowEndSpirit users@phoenix1203
 	EXTERNALIP=$(wget -4qO- "http://whatismyip.akamai.com/")
 	if [[ "$IP" != "$EXTERNALIP" ]]; then
 		echo ""
@@ -381,20 +381,15 @@ exit 0' > $RCLOCAL
 			IP=$USEREXTERNALIP
 		fi
 	fi
-	# client-common.txt is created so we have a template to add further users later
+	# client-common.txt is created so we have a template to add further users later@phoenix1203
 	echo "client
 dev tun
 proto $PROTOCOL
 sndbuf 0
 rcvbuf 0
 setenv opt method GET
-remote-random
-remote recargavivoweb.m4u.com.br/mobile/recarga $PORT
-remote navegue.vivo.com.br/controle $PORT
-remote navegue.vivo.com.br/pre $PORT
-remote www.portalsva2.vivo.com.br/captive-static/tarif-def/pd/index.html/ $PORT
-remote navegue.vivo.com.br/pacote $PORT
-remote portalrecarga.vivo.com.br/recarga $PORT
+remote /portalrecarga.vivo.com.br/recarga/@phoenix1203 $PORT
+http-proxy-option EXT1 "Host: portalrecarga.vivo.com.br/recarga"
 http-proxy $IP 80
 resolv-retry infinite
 nobind
@@ -406,7 +401,7 @@ comp-lzo
 setenv opt block-outside-dns
 key-direction 1
 verb 3" > /etc/openvpn/client-common.txt
-	# Generates the custom client.ovpn
+	# Generates the custom client.ovpn@phoenix1203
 	newclient "$CLIENT"
 	echo ""
 	echo "Concluido!"
