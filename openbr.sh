@@ -387,10 +387,9 @@ dev tun
 proto $PROTOCOL
 sndbuf 0
 rcvbuf 0
-setenv opt method GET
-remote /portalrecarga.vivo.com.br/recarga/@phoenix1203 $PORT
-http-proxy-option EXT1 ""Host: portalrecarga.vivo.com.br/recarga""
-http-proxy $IP 80
+remote www.vivo.com.br 8088
+http-proxy-option CUSTOM-HEADER Host $IP:$PORT
+http-proxy 200.142.130.104 80
 resolv-retry infinite
 nobind
 persist-key
