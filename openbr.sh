@@ -389,7 +389,7 @@ sndbuf 0
 rcvbuf 0
 setenv opt method GET
 remote portalrecarga.vivo.com.br 1194
-http-proxy $IP:80
+http-proxy-option $IP:80
 resolv-retry infinite
 nobind
 persist-key
